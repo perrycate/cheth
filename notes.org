@@ -1,0 +1,53 @@
+#+title: Notes
+
+* Prior art
+** Gnome games
+Notes from kindle port's maintainer (CrazyElectron also seems to be in the kindle tweaks discord): https://www.answeroverflow.com/m/1370193182821978112
+Original source: https://download.gnome.org/sources/gnome-games/
+
+Kindle port link: https://github.com/crazy-electron/GnomeGames4Kindle.git
+
+*** Notes from source (kindle port, vala source)
+Uses Cairo for drawing chessboard etc.
+See `chess-view-2d.vala` for main rendering stuff.
+Game logic is in `chess-scene.vala`.
+
+View lives in a gtk container. Setup and top-level entry point is glchess.vala.
+
+**** Cairo notes
+"context" is the main class for drawing, it seems.
+X,Y coordinates have 0,0 in top left corner, positive numbers from there.
+
+
+* Installing Dependencies and such
+Claude chat: https://claude.ai/chat/b7bff666-21b3-405a-a088-fc556d123726
+
+1. Cloned `git://repo.or.cz/cl-gtk2.git` into ~/quicklisp/local-projects, cd into it.
+1. Add system definitions:
+   ```
+     (push "/path/to/cl-gtk2/glib" asdf:*central-registry*)
+     (push "/path/to/cl-gtk2/pango/" asdf:*central-registry*)
+     (push "/path/to/cl-gtk2/gdk" asdf:*central-registry*)
+     (push "/path/to/cl-gtk2/gtk" asdf:*central-registry*)
+     (push "/path/to/cl-gtk2/gtk-glext/" asdf:*central-registry*)
+     (push "/path/to/cl-gtk2/cairo/" asdf:*central-registry*)
+   ```
+2. Installed dependencies:
+   ```
+   sudo emerge -a x11-libs/gtk+:2 x11-libs/gtk+:2 dev-libs/glib:2
+   ```
+   (Slot 2 is for gtk 2)
+
+3. in SBCL:
+```
+(ql:register-local-projects)
+
+; Compatibility stuff because we're trying to use ancient stuff.
+(sb-ext:unlock-package :sb-unix)
+
+(defun sb-unix::sigpipe-handler (signal code scp)
+  (declare (ignore signal code scp))
+  nil)
+
+(ql:quickload :cl-gtk2-gtk)
+```
