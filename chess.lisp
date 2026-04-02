@@ -15,6 +15,12 @@
   (declare (ignore signal code scp))
   nil)
 (ql:quickload :cl-gtk2-gtk)
+(ql:quickload :cl-gtk2-cairo)
+
+(defun render-chessboard (widget event)
+  (declare (ignore event))
+  (cl-gtk2-cairo:create-gdk-context (gtk:widget-window widget))
+  (format t "Rendered!~%"))
 
 ;; Ok, let's render a chessboard.
 (defun test ()
@@ -33,9 +39,7 @@
                                 (gtk:leave-gtk-main)))
 
       (gobject:connect-signal drawing-area "expose-event"
-                              (lambda (widget event)
-                                (declare (ignore widget))
-                                (format t "Exposed!~%")))
+                              #'render-chessboard)
 
       ;; Add the button to the window and show everything
       (gtk:container-add window drawing-area)
