@@ -38,6 +38,7 @@
   (setf *context* (cl-gtk2-cairo:create-gdk-context (gtk:widget-window widget)))
   (multiple-value-bind (w h) (gdk:drawable-get-size (gtk:widget-window widget))
     (draw-board (min w h))
+    (draw-white-pawn 0 0 100)
     )
   (format t "Rendered!~%"))
 
