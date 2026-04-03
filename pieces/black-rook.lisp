@@ -1,0 +1,80 @@
+;; Claude generated, to avoid having to add a new dependency for rendering piece images.
+
+(defun draw-black-rook (x y size)
+  "Draw a black rook at position (X, Y) scaled to SIZE.
+   The piece is drawn within a SIZE x SIZE square with its top-left at (X, Y).
+   Assumes cl-cairo2 is loaded and *context* is bound."
+  (let ((s (/ size 1000.0)))            ; SVG viewBox is 1000x1000
+    (save)
+    (translate x y)
+    (scale s s)
+
+    ;; Outer path: white fill
+    (set-source-rgb 1 1 1)
+    (move-to 188 910)
+    (line-to 188 741)
+    (line-to 308 632)
+    (line-to 308 396)
+    (line-to 188 316)
+    (line-to 188 115)
+    (line-to 368 115)
+    (line-to 368 195)
+    (line-to 409 195)
+    (line-to 409 115)
+    (line-to 591 115)
+    (line-to 591 195)
+    (line-to 632 195)
+    (line-to 632 115)
+    (line-to 812 115)
+    (line-to 812 316)
+    (line-to 692 396)
+    (line-to 692 632)
+    (line-to 812 741)
+    (line-to 812 910)
+    (line-to 188 910)
+    (fill-path)
+
+    ;; Black outline path with inner cutouts (nonzero fill rule)
+    (set-source-rgb 0 0 0)
+
+    ;; Outer subpath (clockwise)
+    (move-to 188 910)
+    (line-to 188 741)
+    (line-to 308 632)
+    (line-to 308 396)
+    (line-to 188 316)
+    (line-to 188 115)
+    (line-to 368 115)
+    (line-to 368 195)
+    (line-to 409 195)
+    (line-to 409 115)
+    (line-to 591 115)
+    (line-to 591 195)
+    (line-to 632 195)
+    (line-to 632 115)
+    (line-to 812 115)
+    (line-to 812 316)
+    (line-to 692 396)
+    (line-to 692 632)
+    (line-to 812 741)
+    (line-to 812 910)
+    (line-to 188 910)
+
+    ;; Inner subpath: horizontal band at waist
+    (new-sub-path)
+    (move-to 348 658)
+    (line-to 652 658)
+    (line-to 652 618)
+    (line-to 348 618)
+    (line-to 348 658)
+
+    ;; Inner subpath: horizontal band at top
+    (new-sub-path)
+    (move-to 348 416)
+    (line-to 652 416)
+    (line-to 652 376)
+    (line-to 348 376)
+    (line-to 348 416)
+    (fill-path)
+
+    (restore)))

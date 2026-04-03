@@ -19,6 +19,9 @@
 
 (use-package :cl-cairo2)
 
+(dolist (file (directory "pieces/*.lisp"))
+  (load file))
+
 (defun draw-board (width)
   (let ((square-width (/ width 8)))
     (dotimes (x 8)
@@ -28,9 +31,21 @@
         (if (= (mod (+ x y) 2) 0) (set-source-rgb 1 1 1) (set-source-rgb 0 0 0))
         (fill-path)
         ))
-    (set-source-rgb 1 1 1)
-    (set-line-width 5)
-    (fill-path)
+
+    ;; Render the pieces. Don't care about placement, just want to see if they look ok.
+    (draw-white-pawn 0 0 100)
+    (draw-white-bishop 0 100 100)
+    (draw-white-knight 0 200 100)
+    (draw-white-rook 0 300 100)
+    (draw-white-queen 0 400 100)
+    (draw-white-king 0 500 100)
+
+    (draw-black-pawn 100 0 100)
+    (draw-black-bishop 100 100 100)
+    (draw-black-knight 100 200 100)
+    (draw-black-rook 100 300 100)
+    (draw-black-queen 100 400 100)
+    (draw-black-king 100 500 100)
     ))
 
 (defun render-chessboard (widget event)
@@ -38,7 +53,6 @@
   (setf *context* (cl-gtk2-cairo:create-gdk-context (gtk:widget-window widget)))
   (multiple-value-bind (w h) (gdk:drawable-get-size (gtk:widget-window widget))
     (draw-board (min w h))
-    (draw-white-pawn 0 0 100)
     )
   (format t "Rendered!~%"))
 

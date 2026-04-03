@@ -1,0 +1,56 @@
+;; Claude generated, to avoid having to add a new dependency for rendering piece images.
+
+(defun draw-black-pawn (x y size)
+  "Draw a black pawn at position (X, Y) scaled to SIZE.
+   The piece is drawn within a SIZE x SIZE square with its top-left at (X, Y).
+   Assumes cl-cairo2 is loaded and *context* is bound."
+  (let ((s (/ size 1000.0)))            ; SVG viewBox is 1000x1000
+    (save)
+    (translate x y)
+    (scale s s)
+
+    ;; Outer path: white fill
+    (set-source-rgb 1 1 1)
+    (move-to 188 910)
+    (line-to 188 769)
+    (curve-to 188 704 218 578 339 528)
+    (line-to 339 525)
+    (curve-to 316 497 303 461 303 423)
+    (curve-to 303 375 324 324 379 285)
+    (line-to 379 283)
+    (curve-to 373 273 364 250 364 231)
+    (curve-to 364 170 401 105 500 105)
+    (curve-to 599 105 636 170 636 231)
+    (curve-to 636 250 627 273 621 283)
+    (line-to 621 285)
+    (curve-to 676 324 697 375 697 423)
+    (curve-to 697 461 684 497 661 525)
+    (line-to 661 528)
+    (curve-to 782 578 812 704 812 769)
+    (line-to 812 910)
+    (line-to 188 910)
+    (fill-path)
+
+    ;; Black fill path (solid)
+    (set-source-rgb 0 0 0)
+    (move-to 188 910)
+    (line-to 188 769)
+    (curve-to 188 704 218 578 339 528)
+    (line-to 339 525)
+    (curve-to 316 497 303 461 303 423)
+    (curve-to 303 375 324 324 379 285)
+    (line-to 379 283)
+    (curve-to 373 273 364 250 364 231)
+    (curve-to 364 170 401 105 500 105)
+    (curve-to 599 105 636 170 636 231)
+    (curve-to 636 250 627 273 621 283)
+    (line-to 621 285)
+    (curve-to 676 324 697 375 697 423)
+    (curve-to 697 461 684 497 661 525)
+    (line-to 661 528)
+    (curve-to 782 578 812 704 812 769)
+    (line-to 812 910)
+    (line-to 188 910)
+    (fill-path)
+
+    (restore)))
