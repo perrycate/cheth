@@ -17,10 +17,30 @@
 (ql:quickload :cl-gtk2-gtk)
 (ql:quickload :cl-gtk2-cairo)
 
+(use-package :cl-cairo2)
+
+(defun draw-board (width)
+  (let ((square-width (/ width 8)))
+    (dotimes (x 8)
+      (dotimes (y 8)
+        (rectangle (* x square-width) (* y square-width) square-width square-width)
+        ;; Alternate square colors.
+        (if (= (mod (+ x y) 2) 0) (set-source-rgb 1 1 1) (set-source-rgb 0 0 0))
+        (fill-path)
+        ))
+    (set-source-rgb 1 1 1)
+    (set-line-width 5)
+    (fill-path)
+    ))
+
 (defun render-chessboard (widget event)
   (declare (ignore event))
-  (cl-gtk2-cairo:create-gdk-context (gtk:widget-window widget))
+  (setf *context* (cl-gtk2-cairo:create-gdk-context (gtk:widget-window widget)))
+  (multiple-value-bind (w h) (gdk:drawable-get-size (gtk:widget-window widget))
+    (draw-board (min w h))
+    )
   (format t "Rendered!~%"))
+
 
 ;; Ok, let's render a chessboard.
 (defun test ()
