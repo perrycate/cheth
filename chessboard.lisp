@@ -53,23 +53,27 @@
 (dolist (file (directory "pieces/*.lisp"))
   (load file))
 
-(defun draw-piece (color piece pixel-coordinates width)
-  (destructuring-bind (x y) pixel-coordinates
-    (cond
-      ((and (eq color :white) (eq piece :pawn)) (draw-white-pawn x y width))
-      ((and (eq color :white) (eq piece :knight)) (draw-white-knight x y width))
-      ((and (eq color :white) (eq piece :bishop)) (draw-white-bishop x y width))
-      ((and (eq color :white) (eq piece :rook)) (draw-white-rook x y width))
-      ((and (eq color :white) (eq piece :queen)) (draw-white-queen x y width))
-      ((and (eq color :white) (eq piece :king)) (draw-white-king x y width))
+(defun draw-piece (color piece pixel-coordinates board-width)
+  (destructuring-bind (x-offset y-offset) pixel-coordinates
+    (let* ((width (/ board-width 8))
+           (x (* x-offset width))
+           (y (* y-offset width)))
+      (cond
+        ((and (eq color :white) (eq piece :pawn)) (draw-white-pawn x y width))
+        ((and (eq color :white) (eq piece :knight)) (draw-white-knight x y width))
+        ((and (eq color :white) (eq piece :bishop)) (draw-white-bishop x y width))
+        ((and (eq color :white) (eq piece :rook)) (draw-white-rook x y width))
+        ((and (eq color :white) (eq piece :queen)) (draw-white-queen x y width))
+        ((and (eq color :white) (eq piece :king)) (draw-white-king x y width))
 
-      ((and (eq color :black) (eq piece :pawn)) (draw-black-pawn x y width))
-      ((and (eq color :black) (eq piece :knight)) (draw-black-knight x y width))
-      ((and (eq color :black) (eq piece :bishop)) (draw-black-bishop x y width))
-      ((and (eq color :black) (eq piece :rook)) (draw-black-rook x y width))
-      ((and (eq color :black) (eq piece :queen)) (draw-black-queen x y width))
-      ((and (eq color :black) (eq piece :king)) (draw-black-king x y width))
-      )))
+        ((and (eq color :black) (eq piece :pawn)) (draw-black-pawn x y width))
+        ((and (eq color :black) (eq piece :knight)) (draw-black-knight x y width))
+        ((and (eq color :black) (eq piece :bishop)) (draw-black-bishop x y width))
+        ((and (eq color :black) (eq piece :rook)) (draw-black-rook x y width))
+        ((and (eq color :black) (eq piece :queen)) (draw-black-queen x y width))
+        ((and (eq color :black) (eq piece :king)) (draw-black-king x y width))
+        ))
+    ))
 
 ;; TODO I wonder if I can just get width from the context?
 ;; Would need to call gdk:drawable-get-size on the widget window.
@@ -86,23 +90,28 @@
         ))
     ))
 
-;; Translates a square value (eg :b2) into x and y pixel coordinates for a board of the given size.
-(defun get-coordinates (square board-width)
-  ;; 0,0 is in the top left corner.
+;; Translates a square value (eg :b2) into x and y coordinates, where each square
+;; is one unit, and the top left square is (0,0).
+;; e.g. :b2 -> (1,6).
+;;
+;; (Having 0,0 be in the top left instead of bottom left matches Cairo's coordinate
+;; system, so all we have to do is scale the coordinates to the resolution we're using.)
+(defun get-coordinates (square)
   (let* (
-         (square-width (/ board-width 8))
          (s (string square))
-         ;; Start by getting offsets, where each square is one unit.
-         (x-offset (- (char-int (char s 0)) (char-int #\A)))
-         (y-offset (- (digit-char-p (char s 1)) 1)))
 
-    ;; Scale to board width.
-    (list (* x-offset square-width) (* y-offset square-width))))
+         ;; Start by getting integer values with 0,0 at a1.
+         (x-int (- (char-int (char s 0)) (char-int #\A)))
+         (y-int (- (digit-char-p (char s 1)) 1)))
+
+    ;; Make 0,0 the top left.
+    (list x-int (- 7 y-int))
+    ))
 
 (defun draw-position (position width)
   (dolist (piece position)
     (destructuring-bind (square . (color piece)) piece
-      (draw-piece color piece (get-coordinates square width) (/ width 8)))))
+      (draw-piece color piece (get-coordinates square) width))))
 
 (draw-board 600)
 (draw-position *starting-position* 600)
