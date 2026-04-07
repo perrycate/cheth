@@ -62,7 +62,7 @@ Claude chat: https://claude.ai/chat/b7bff666-21b3-405a-a088-fc556d123726
 *** Board state is just: What pieces are on the board, and where.
 *** Probably a map from square (identified by 'h3, etc) to piece (if any)
 *** Eventually we'll have a function that generates board state based on game state.
-** Render pieces correctly based on a board state
+** [x] Render pieces correctly based on a board state
 
 * AI review 6/6/26
   ---

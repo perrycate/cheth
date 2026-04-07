@@ -57,6 +57,7 @@
     (let* ((width (/ board-width 8))
            (x (* x-offset width))
            (y (* y-offset width)))
+      ;; TODO Let's just have a map from (color piece) to function.
       (cond
         ((and (eq color :white) (eq piece :pawn)) (draw-white-pawn x y width))
         ((and (eq color :white) (eq piece :knight)) (draw-white-knight x y width))
