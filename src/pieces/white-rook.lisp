@@ -1,7 +1,8 @@
 ;; Claude generated, to avoid having to add a new dependency for rendering piece images.
+(in-package :cheth)
 
-(defun draw-black-rook (x y size)
-  "Draw a black rook at position (X, Y) scaled to SIZE.
+(defun draw-white-rook (x y size)
+  "Draw a white rook at position (X, Y) scaled to SIZE.
    The piece is drawn within a SIZE x SIZE square with its top-left at (X, Y).
    Assumes cl-cairo2 is loaded and *context* is bound."
   (let ((s (/ size 1000.0)))            ; SVG viewBox is 1000x1000
@@ -88,21 +89,47 @@
     (line-to 812 910)
     (line-to 188 910)
 
-    ;; Inner subpath: horizontal band at waist
+    ;; Inner subpath: bottom band
     (new-sub-path)
-    (move-to 348 658)
-    (line-to 652 658)
-    (line-to 652 618)
-    (line-to 348 618)
-    (line-to 348 658)
+    (move-to 248 850)
+    (line-to 752 850)
+    (line-to 752 810)
+    (line-to 248 810)
+    (line-to 248 850)
 
-    ;; Inner subpath: horizontal band at top
+    ;; Inner subpath: top battlements
     (new-sub-path)
-    (move-to 348 416)
-    (line-to 652 416)
-    (line-to 652 376)
-    (line-to 348 376)
-    (line-to 348 416)
+    (move-to 248 275)
+    (line-to 368 356)
+    (line-to 632 356)
+    (line-to 752 275)
+    (line-to 752 175)
+    (line-to 692 175)
+    (line-to 692 255)
+    (line-to 531 255)
+    (line-to 531 175)
+    (line-to 469 175)
+    (line-to 469 255)
+    (line-to 308 255)
+    (line-to 308 175)
+    (line-to 248 175)
+    (line-to 248 275)
+
+    ;; Inner subpath: middle band
+    (new-sub-path)
+    (move-to 278 750)
+    (line-to 722 750)
+    (line-to 632 669)
+    (line-to 368 669)
+    (line-to 278 750)
+
+    ;; Inner subpath: body
+    (new-sub-path)
+    (move-to 368 598)
+    (line-to 632 598)
+    (line-to 632 427)
+    (line-to 368 427)
+    (line-to 368 598)
     (fill-path)
 
     (restore)))

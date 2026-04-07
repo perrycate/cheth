@@ -1,7 +1,8 @@
 ;; Claude generated, to avoid having to add a new dependency for rendering piece images.
+(in-package :cheth)
 
-(defun draw-white-bishop (x y size)
-  "Draw a white bishop at position (X, Y) scaled to SIZE.
+(defun draw-black-bishop (x y size)
+  "Draw a black bishop at position (X, Y) scaled to SIZE.
    The piece is drawn within a SIZE x SIZE square with its top-left at (X, Y).
    Assumes cl-cairo2 is loaded and *context* is bound."
   (let ((s (/ size 1000.0)))            ; SVG viewBox is 1000x1000
@@ -142,81 +143,45 @@
     (curve-to 143 936 128 939 107 943)
     (line-to 56 782)
 
-    ;; Inner subpath: bottom band
+    ;; Inner subpath: ribbon 1
     (new-sub-path)
-    (move-to 127 832)
-    (line-to 147 883)
-    (curve-to 168 872 190 866 208 863)
-    (curve-to 247 855 280 852 314 851)
-    (curve-to 357 850 451 841 500 792)
-    (curve-to 549 841 643 850 686 851)
-    (curve-to 720 852 753 855 792 863)
-    (curve-to 810 866 832 872 853 883)
-    (line-to 873 832)
-    (curve-to 838 820 798 811 748 809)
-    (curve-to 719 808 670 805 637 800)
-    (curve-to 583 792 568 782 540 762)
-    (line-to 460 762)
-    (curve-to 432 782 417 792 363 800)
-    (curve-to 330 805 281 808 252 809)
-    (curve-to 202 811 162 820 127 832)
+    (move-to 369 661)
+    (line-to 371 663)
+    (curve-to 405 650 450 639 500 639)
+    (curve-to 550 639 595 650 629 663)
+    (line-to 631 661)
+    (line-to 621 631)
+    (curve-to 592 618 545 608 500 608)
+    (curve-to 455 608 408 618 379 631)
+    (line-to 369 661)
 
-    ;; Inner subpath: body
+    ;; Inner subpath: ribbon 2
     (new-sub-path)
-    (move-to 328 456)
-    (curve-to 328 496 335 530 380 550)
-    (curve-to 419 537 457 530 500 530)
-    (curve-to 543 530 581 537 620 550)
-    (curve-to 665 530 672 496 672 456)
-    (curve-to 672 382 620 334 576 308)
-    (curve-to 547 291 519 274 501 239)
-    (line-to 499 239)
-    (curve-to 481 274 453 291 424 308)
-    (curve-to 380 334 328 382 328 456)
-
-    ;; Inner subpath: lower ribbon 1
-    (new-sub-path)
-    (move-to 379 621)
-    (curve-to 404 611 452 606 500 606)
-    (curve-to 548 606 596 611 621 621)
-    (curve-to 621 621 615 603 611 591)
-    (curve-to 591 581 530 575 500 575)
-    (curve-to 470 575 409 581 389 591)
-    (curve-to 385 603 379 621 379 621)
-
-    ;; Inner subpath: lower ribbon 2
-    (new-sub-path)
-    (move-to 399 662)
-    (curve-to 439 668 460 671 500 671)
-    (curve-to 540 671 561 668 601 662)
-    (line-to 601 660)
-    (curve-to 561 654 540 651 500 651)
-    (curve-to 460 651 439 654 399 660)
-    (line-to 399 662)
+    (move-to 389 590)
+    (line-to 391 591)
+    (curve-to 413 578 455 568 500 568)
+    (curve-to 545 568 587 578 609 591)
+    (line-to 611 590)
+    (line-to 601 558)
+    (curve-to 585 548 544 539 500 539)
+    (curve-to 456 539 415 548 399 558)
+    (line-to 389 590)
 
     ;; Inner subpath: cross
     (new-sub-path)
     (move-to 428 449)
-    (line-to 428 389)
-    (line-to 470 389)
-    (line-to 470 347)
-    (line-to 530 347)
-    (line-to 530 389)
-    (line-to 572 389)
-    (line-to 572 449)
-    (line-to 530 449)
-    (line-to 530 491)
-    (line-to 470 491)
     (line-to 470 449)
+    (line-to 470 491)
+    (line-to 530 491)
+    (line-to 530 449)
+    (line-to 572 449)
+    (line-to 572 389)
+    (line-to 530 389)
+    (line-to 530 347)
+    (line-to 470 347)
+    (line-to 470 389)
+    (line-to 428 389)
     (line-to 428 449)
-
-    ;; Inner subpath: head circle
-    (new-sub-path)
-    (move-to 470 147)
-    (curve-to 470 164 483 177 500 177)
-    (curve-to 517 177 530 164 530 147)
-    (curve-to 530 130 517 117 500 117)
-    (curve-to 483 117 470 130 470 147)
     (fill-path)
 
     (restore)))

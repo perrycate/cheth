@@ -1,23 +1,6 @@
 ;; For now this is just a bunch of helpers and stuff for me to call from the repl
 ;; while I experiment.
-
-;; Point to the correct (ancient) gtk libraries.
-(push "/home/perry/quicklisp/local-projects/cl-gtk2/glib/" asdf:*central-registry*)
-(push "/home/perry/quicklisp/local-projects/cl-gtk2/pango/" asdf:*central-registry*)
-(push "/home/perry/quicklisp/local-projects/cl-gtk2/gdk/" asdf:*central-registry*)
-(push "/home/perry/quicklisp/local-projects/cl-gtk2/gtk/" asdf:*central-registry*)
-(push "/home/perry/quicklisp/local-projects/cl-gtk2/gtk-glext/" asdf:*central-registry*)
-(push "/home/perry/quicklisp/local-projects/cl-gtk2/cairo/" asdf:*central-registry*)
-
-;; Compatiblity stuff, call these first.
-(sb-ext:unlock-package :sb-unix)
-(defun sb-unix::sigpipe-handler (signal code scp)
-  (declare (ignore signal code scp))
-  nil)
-(ql:quickload :cl-gtk2-gtk)
-(ql:quickload :cl-gtk2-cairo)
-
-(use-package :cl-cairo2)
+(in-package :cheth)
 
 (defun render-chessboard (widget event)
   (declare (ignore event))

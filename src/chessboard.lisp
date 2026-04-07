@@ -1,5 +1,5 @@
-(asdf:operate 'asdf:load-op :cl-cairo2)
-(use-package :cl-cairo2)
+(in-package :cheth)
+
 (defparameter *surface* (create-pdf-surface "test.pdf" 600 600))
 (setf *context* (create-context *surface*))
 

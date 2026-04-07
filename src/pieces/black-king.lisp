@@ -1,4 +1,5 @@
 ;; Claude generated, to avoid having to add a new dependency for rendering piece images.
+(in-package :cheth)
 
 (defun draw-black-king (x y size)
   "Draw a black king at position (X, Y) scaled to SIZE.

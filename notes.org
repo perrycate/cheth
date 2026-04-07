@@ -52,6 +52,9 @@ Claude chat: https://claude.ai/chat/b7bff666-21b3-405a-a088-fc556d123726
 (ql:quickload :cl-gtk2-gtk)
 ```
 
+* Setup
+(pushnew (uiop:getcwd) ql:*local-project-directories*)
+(ql:quickload :cheth)
 
 * Open questions
 ** How does the original source handle black-on-black?
