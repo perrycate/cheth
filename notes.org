@@ -63,3 +63,158 @@ Claude chat: https://claude.ai/chat/b7bff666-21b3-405a-a088-fc556d123726
 *** Probably a map from square (identified by 'h3, etc) to piece (if any)
 *** Eventually we'll have a function that generates board state based on game state.
 ** Render pieces correctly based on a board state
+
+* AI review 6/6/26
+  ---
+  Code Review: cheth
+
+  1. No ASDF system definition or package
+
+  This is the single biggest departure from Common Lisp norms. An idiomatic CL project has:
+
+  - A .asd file declaring the system, its dependencies, and its components
+  - A defpackage form defining exported/imported symbols
+  - in-package at the top of every source file
+
+  Currently all definitions land in CL-USER. The dependencies (cl-gtk2-gtk, cl-gtk2-cairo, cl-cairo2) are loaded imperatively via ql:quickload calls in chess.lisp rather than
+  declared as ASDF dependencies. The piece files are loaded with a bare (dolist (file (directory "pieces/*.lisp")) (load file)) in chessboard.lisp:53-54, which depends on the
+  working directory and doesn't guarantee load order.
+
+  Even a minimal .asd would let you (ql:quickload :cheth) and have everything load correctly regardless of CWD:
+
+  (defsystem "cheth"
+    :depends-on ("cl-cairo2" ...)
+    :components ((:file "package")
+                 (:module "pieces" :components (...))
+                 (:file "chessboard")))
+
+  2. Side effects at load time
+
+  Both files execute real work when loaded:
+
+  - chessboard.lisp:3-4 creates a PDF surface and context
+  - chessboard.lisp:48-49 paints the background red
+  - chessboard.lisp:53-54 loads all piece files
+  - chessboard.lisp:116-119 draws the board, draws the position, and destroys the context/surface
+  - chess.lisp:53 calls (test), immediately opening a GTK window
+
+  Idiomatic CL separates definitions from execution. You should be able to load a file to get its defuns/defparameters without triggering side effects. Wrap the imperative parts
+  in a function (e.g. render-to-pdf, main).
+
+  3. Closing parentheses on their own lines
+
+  This appears in several places (chessboard.lisp:27, 75-76, 90-91):
+
+  (draw-board (min w h))
+      )                          ; <-- this line
+    (format t "Rendered!~%"))
+
+          ((and (eq color :black) (eq piece :king)) (draw-black-king x y width))
+          ))                     ; <-- and this
+      ))
+
+  In Lisp, trailing parens go on the same line as the last form. Indentation communicates structure; dangling parens serve no purpose and read like C/Java style:
+
+  (draw-board (min w h)))       ; correct
+
+  This is perhaps the most universally held CL style convention.
+
+  4. use-package at top level
+
+  Both chess.lisp:20 and chessboard.lisp:2 call (use-package :cl-cairo2). This imports all exported symbols from cl-cairo2 into the current package. It's fragile — if the two
+  files are loaded into the same image, the second call is redundant; if they're in different packages (someday), you'll get symbol conflicts. The idiomatic approach is :use
+  inside defpackage, or explicit package-qualified names (cl-cairo2:set-source-rgb).
+
+  5. Variable shadowing in draw-position
+
+  chessboard.lisp:112-114:
+  (defun draw-position (position width)
+    (dolist (piece position)
+      (destructuring-bind (square . (color piece)) piece
+
+  The dolist variable piece (the alist cons cell) is shadowed by the destructured piece (the piece type keyword like :pawn). It works because the inner binding takes precedence
+  where you actually use it, but it's confusing to read. Renaming the dolist variable to entry or placement would clarify this.
+
+  6. The 12-branch cond dispatch
+
+  chessboard.lisp:61-75 dispatches on all (color, piece) pairs with a flat cond. This scales poorly (you'd need more branches for promoted pieces, etc.) and has no
+  fallthrough/default case — an unrecognized piece silently does nothing.
+
+  A more Lispy approach builds the function name dynamically:
+
+  (defun draw-piece (color piece pixel-coordinates board-width)
+    (let ((fn (find-symbol
+               (format nil "DRAW-~A-~A" color piece)
+               *package*)))
+      (when (and fn (fboundp fn))
+        (destructuring-bind (x-offset y-offset) pixel-coordinates
+          (let* ((width (/ board-width 8))
+                 (x (* x-offset width))
+                 (y (* y-offset width)))
+            (funcall fn x y width))))))
+
+  Or use an alist/hash-table mapping (color . piece) to drawing functions.
+
+  7. Massive path duplication in piece files
+
+  Every piece file repeats the same outline path three times: once for the border stroke, once for the white fill, once for the black outline's outer subpath. In white-pawn.lisp,
+  the path from (move-to 188 910) through (line-to 188 910) appears identically at lines 17-34, 39-56, and 63-80.
+
+  Between white and black variants of the same piece, the path data is nearly identical too (the black version just differs in what inner cutouts are drawn).
+
+  A macro like with-piece-outline that takes the path commands once and emits all three passes would cut each piece file to roughly 1/3 its current size and ensure the three
+  copies can't drift apart during editing.
+
+  8. Pure black/white board squares
+
+  chessboard.lisp:88:
+  (if (= (mod (+ x y) 2) 0) (set-source-rgb 1 1 1) (set-source-rgb 0 0 0))
+
+  Black pieces on black squares will be invisible — your notes.org already flags this as an open question. Traditional chess rendering uses something like (0.94 0.85 0.71) / (0.71
+   0.53 0.39) (tan/brown).
+
+  9. Hardcoded absolute paths
+
+  chess.lisp:5-10 hardcodes /home/perry/quicklisp/local-projects/cl-gtk2/.... Fine for a personal scratchpad; would break for any other user or machine. An ASDF system definition
+  with declared dependencies eliminates this.
+
+  10. SBCL-specific monkey-patching
+
+  chess.lisp:13-16 unlocks SB-UNIX and redefines sigpipe-handler to work around cl-gtk2 incompatibilities. This is SBCL-specific, version-fragile, and would need a #+sbcl reader
+  conditional at minimum to avoid breaking on other implementations.
+
+  11. get- prefix
+
+  chessboard.lisp:99: get-coordinates — CL convention avoids the get- prefix (that's more of a Java-ism). square-coordinates or just coordinates-of reads more naturally in Lisp.
+
+  12. test as a function name
+
+  chess.lisp:32: test is extremely generic. Since it opens a GTK window showing the chessboard, something like run, main, or show-board would be clearer about intent.
+
+  13. asdf:operate vs asdf:load-system
+
+  chessboard.lisp:1: (asdf:operate 'asdf:load-op :cl-cairo2) — the preferred modern form is (asdf:load-system :cl-cairo2), which is shorter and more commonly seen.
+
+  ---
+  Summary
+
+  The code works and the overall approach (Cairo for rendering, keyword alists for position, coordinate math) is reasonable. The main gaps are about CL project conventions rather
+  than logic bugs:
+
+  ┌──────────┬───────────────────────────────────────────────────────────────────┐
+  │ Priority │                              Finding                              │
+  ├──────────┼───────────────────────────────────────────────────────────────────┤
+  │ High     │ No .asd system, no defpackage, no in-package                      │
+  ├──────────┼───────────────────────────────────────────────────────────────────┤
+  │ High     │ Side effects at load time — can't load without executing          │
+  ├──────────┼───────────────────────────────────────────────────────────────────┤
+  │ Medium   │ Trailing parens on own lines (universal CL style violation)       │
+  ├──────────┼───────────────────────────────────────────────────────────────────┤
+  │ Medium   │ 3x path duplication per piece file (~2000 LOC that could be ~700) │
+  ├──────────┼───────────────────────────────────────────────────────────────────┤
+  │ Medium   │ 12-branch cond could be data-driven dispatch                      │
+  ├──────────┼───────────────────────────────────────────────────────────────────┤
+  │ Low      │ Variable shadowing, naming (get-, test), hardcoded paths          │
+  ├──────────┼───────────────────────────────────────────────────────────────────┤
+  │ Low      │ Pure black squares make black pieces invisible                    │
+  └──────────┴───────────────────────────────────────────────────────────────────┘
