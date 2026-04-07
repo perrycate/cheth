@@ -92,9 +92,8 @@
 ;;
 ;; (Having 0,0 be in the top left instead of bottom left matches Cairo's coordinate
 ;; system, so all we have to do is scale the coordinates to the resolution we're using.)
-(defun get-coordinates (square)
-  (let* (
-         (s (string square))
+(defun coordinates-of (square)
+  (let* ((s (string square))
 
          ;; Start by getting integer values with 0,0 at a1.
          (x-int (- (char-int (char s 0)) (char-int #\A)))
@@ -103,10 +102,31 @@
     ;; Make 0,0 the top left.
     (list x-int (- 7 y-int))))
 
+;; Converts x and y pixel values using cairo/gtk's coordinate system
+;; ((0,0) in the top left) into a specific square (a8, etc.)
+;;
+;; FIXME: This function assumes the chessboard starts at (0,0) and is the
+;; full width of the window. That will not always be true.
+(defun square-of (x y window-width)
+  (let* ((square-width (/ window-width 8))
+
+         ;; Convert to x,y coordinates with (0,0) at a8 and (7,7) at h1.
+         (x-coordinate (floor (/ x square-width)))
+         (y-coordinate (floor (/ y square-width))))
+
+    ;; Build our keyword (eg :b2) from character-based shenanigans.
+    ;; Feels inelegant but it works, and I haven't figured out a more
+    ;; idiomatic way yet.
+    (read-from-string (coerce
+                       (list #\:
+                             (code-char (+ (char-int #\A) x-coordinate))
+                             (digit-char (- 8 y-coordinate)))
+                       'string))))
+
 (defun draw-position (position width)
   (dolist (piece position)
     (destructuring-bind (square . (color piece)) piece
-      (draw-piece color piece (get-coordinates square) width))))
+      (draw-piece color piece (coordinates-of square) width))))
 
 (draw-board 600)
 (draw-position *starting-position* 600)

@@ -52,9 +52,9 @@
 
       (gobject:connect-signal drawing-area "button-press-event"
                               (lambda (widget event)
-                                (format t "clicked at ~A, ~A~%"
-                                        (gdk:event-button-x event)
-                                        (gdk:event-button-y event))))
+                                (format t "clicked ~A~%"
+                                        ;; Hardcoding width for now, idgaf
+                                        (square-of (gdk:event-button-x event) (gdk:event-button-y event) 600))))
 
       ;; Allow gtk to report button-press events to the drawing area. (I think.)
       (setf (gtk:widget-events drawing-area) '(:button-press-mask))
