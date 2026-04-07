@@ -40,8 +40,7 @@
     (:e8 . (:black :king))
     (:f8 . (:black :bishop))
     (:g8 . (:black :knight))
-    (:h8 . (:black :rook))
-    ))
+    (:h8 . (:black :rook))))
 
 ;; The whole drawing surface be painted over,
 ;; so this red is just to highlight if something is misaligned.
@@ -71,9 +70,7 @@
         ((and (eq color :black) (eq piece :bishop)) (draw-black-bishop x y width))
         ((and (eq color :black) (eq piece :rook)) (draw-black-rook x y width))
         ((and (eq color :black) (eq piece :queen)) (draw-black-queen x y width))
-        ((and (eq color :black) (eq piece :king)) (draw-black-king x y width))
-        ))
-    ))
+        ((and (eq color :black) (eq piece :king)) (draw-black-king x y width))))))
 
 ;; TODO I wonder if I can just get width from the context?
 ;; Would need to call gdk:drawable-get-size on the widget window.
@@ -86,9 +83,7 @@
         (rectangle (* x square-width) (* y square-width) square-width square-width)
         ;; Alternate square colors.
         (if (= (mod (+ x y) 2) 0) (set-source-rgb 1 1 1) (set-source-rgb 0 0 0))
-        (fill-path)
-        ))
-    ))
+        (fill-path)))))
 
 ;; Translates a square value (eg :b2) into x and y coordinates, where each square
 ;; is one unit, and the top left square is (0,0).
@@ -105,8 +100,7 @@
          (y-int (- (digit-char-p (char s 1)) 1)))
 
     ;; Make 0,0 the top left.
-    (list x-int (- 7 y-int))
-    ))
+    (list x-int (- 7 y-int))))
 
 (defun draw-position (position width)
   (dolist (piece position)
