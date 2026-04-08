@@ -3,9 +3,22 @@
 (defparameter *surface* (create-pdf-surface "test.pdf" 600 600))
 (setf *context* (create-context *surface*))
 
+(defparameter *draw-fns*
+  '(((:white :pawn) . draw-white-pawn)
+    ((:white :knight) . draw-white-knight)
+    ((:white :bishop) . draw-white-bishop)
+    ((:white :rook) . draw-white-rook)
+    ((:white :queen) . draw-white-queen)
+    ((:white :king) . draw-white-king)
+    ((:black :pawn) . draw-black-pawn)
+    ((:black :knight) . draw-black-knight)
+    ((:black :bishop) . draw-black-bishop)
+    ((:black :rook) . draw-black-rook)
+    ((:black :queen) . draw-black-queen)
+    ((:black :king) . draw-black-king)))
+
 (defparameter *starting-position*
-  '(
-    (:a1 . (:white :rook))
+  '((:a1 . (:white :rook))
     (:b1 . (:white :knight))
     (:c1 . (:white :bishop))
     (:d1 . (:white :queen))
@@ -57,21 +70,7 @@
     (let* ((width (/ board-width 8))
            (x (* x-offset width))
            (y (* y-offset width)))
-      ;; TODO Let's just have a map from (color piece) to function.
-      (cond
-        ((and (eq color :white) (eq piece :pawn)) (draw-white-pawn x y width))
-        ((and (eq color :white) (eq piece :knight)) (draw-white-knight x y width))
-        ((and (eq color :white) (eq piece :bishop)) (draw-white-bishop x y width))
-        ((and (eq color :white) (eq piece :rook)) (draw-white-rook x y width))
-        ((and (eq color :white) (eq piece :queen)) (draw-white-queen x y width))
-        ((and (eq color :white) (eq piece :king)) (draw-white-king x y width))
-
-        ((and (eq color :black) (eq piece :pawn)) (draw-black-pawn x y width))
-        ((and (eq color :black) (eq piece :knight)) (draw-black-knight x y width))
-        ((and (eq color :black) (eq piece :bishop)) (draw-black-bishop x y width))
-        ((and (eq color :black) (eq piece :rook)) (draw-black-rook x y width))
-        ((and (eq color :black) (eq piece :queen)) (draw-black-queen x y width))
-        ((and (eq color :black) (eq piece :king)) (draw-black-king x y width))))))
+      (funcall (cdr (assoc (list color piece) *draw-fns* :test #'equal)) x y width))))
 
 ;; TODO I wonder if I can just get width from the context?
 ;; Would need to call gdk:drawable-get-size on the widget window.
