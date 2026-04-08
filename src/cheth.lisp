@@ -13,8 +13,9 @@
 
 (defun handle-click (widget event)
   (multiple-value-bind (w h) (gdk:drawable-get-size (gtk:widget-window widget))
-    (format t "clicked ~A~%"
-            (square-of (gdk:event-button-x event) (gdk:event-button-y event) (min w h)))))
+    (let ((square (square-of (gdk:event-button-x event) (gdk:event-button-y event) (min w h))))
+      (unless (eq square nil)
+        (format t "clicked ~A~%" square)))))
 
 ;; Ok, let's render a chessboard.
 (defun test ()

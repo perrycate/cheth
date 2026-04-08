@@ -107,8 +107,10 @@
 ;;
 ;; FIXME: This function assumes the chessboard starts at (0,0) and is the
 ;; full width of the window. That will not always be true.
-(defun square-of (x y window-width)
-  (let* ((square-width (/ window-width 8))
+(defun square-of (x y board-width)
+  (when (> (max x y) board-width)
+    (return-from square-of))
+  (let* ((square-width (/ board-width 8))
 
          ;; Convert to x,y coordinates with (0,0) at a8 and (7,7) at h1.
          (x-coordinate (floor (/ x square-width)))
