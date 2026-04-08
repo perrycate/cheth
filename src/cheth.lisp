@@ -11,6 +11,10 @@
     )
   (format t "Rendered!~%"))
 
+(defun handle-click (widget event)
+  (multiple-value-bind (w h) (gdk:drawable-get-size (gtk:widget-window widget))
+    (format t "clicked ~A~%"
+            (square-of (gdk:event-button-x event) (gdk:event-button-y event) (min w h)))))
 
 ;; Ok, let's render a chessboard.
 (defun test ()
@@ -34,10 +38,7 @@
                               #'render-chessboard)
 
       (gobject:connect-signal drawing-area "button-press-event"
-                              (lambda (widget event)
-                                (format t "clicked ~A~%"
-                                        ;; Hardcoding width for now, idgaf
-                                        (square-of (gdk:event-button-x event) (gdk:event-button-y event) 600))))
+                              #'handle-click)
 
       ;; Allow gtk to report button-press events to the drawing area. (I think.)
       (setf (gtk:widget-events drawing-area) '(:button-press-mask))

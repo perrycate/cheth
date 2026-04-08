@@ -20,17 +20,7 @@ X,Y coordinates have 0,0 in top left corner, positive numbers from there.
 
 
 * Installing Dependencies and such
-Claude chat: https://claude.ai/chat/b7bff666-21b3-405a-a088-fc556d123726
-
-1. Cloned `git://repo.or.cz/cl-gtk2.git` into ~/quicklisp/local-projects, cd into it.
-1. Add system definitions:
-   ```
-     (push "/path/to/cl-gtk2/glib" asdf:*central-registry*)
-     (push "/path/to/cl-gtk2/pango/" asdf:*central-registry*)
-     (push "/path/to/cl-gtk2/gdk" asdf:*central-registry*)
-     (push "/path/to/cl-gtk2/gtk" asdf:*central-registry*)
-     (push "/path/to/cl-gtk2/gtk-glext/" asdf:*central-registry*)
-     (push "/path/to/cl-gtk2/cairo/" asdf:*central-registry*)
+1. Cloned `git://repo.or.cz/cl-gtk2.git` into ~/quicklisp/local-projects.
    ```
 2. Installed dependencies:
    ```
@@ -41,23 +31,11 @@ Claude chat: https://claude.ai/chat/b7bff666-21b3-405a-a088-fc556d123726
 3. in SBCL:
 ```
 (ql:register-local-projects)
-
-; Compatibility stuff because we're trying to use ancient stuff.
-(sb-ext:unlock-package :sb-unix)
-
-(defun sb-unix::sigpipe-handler (signal code scp)
-  (declare (ignore signal code scp))
-  nil)
-
-(ql:quickload :cl-gtk2-gtk)
 ```
 
 * Setup
 (pushnew (uiop:getcwd) ql:*local-project-directories*)
 (ql:quickload :cheth)
-
-* Open questions
-** How does the original source handle black-on-black?
 
 * TODO
 ** Figure out board state representation
