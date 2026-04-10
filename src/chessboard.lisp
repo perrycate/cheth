@@ -60,11 +60,6 @@
 (set-source-rgb 1 0 0)
 (paint)
 
-;; One day I will figure out how to actually make this all a cohesive package.
-;; Today is not that day.
-(dolist (file (directory "pieces/*.lisp"))
-  (load file))
-
 (defun draw-piece (color piece pixel-coordinates board-width)
   (destructuring-bind (x-offset y-offset) pixel-coordinates
     (let* ((width (/ board-width 8))
