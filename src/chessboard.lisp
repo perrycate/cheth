@@ -55,6 +55,54 @@
     (:g8 . (:black :knight))
     (:h8 . (:black :rook))))
 
+(defclass game ()
+  ;; Stack of moves played, with the most recent moves on top.
+  ((history
+    :initform ()
+    :accessor history)
+   (draw-context
+    :initarg :draw-context)))
+
+(defun current-player (game)
+  (if (= 0 (mod (length (history game)) 2))
+      :white
+      :black))
+
+(defun make-move (game start end piece)
+  (with-accessors ((history history)) game
+    (push (make-instance 'move
+                         :start-square start
+                         :end-square end
+                         :piece piece)
+          history)))
+
+(defclass move ()
+  (
+   (start-square
+    :initarg :start-square
+    :accessor start-square)
+   (end-square
+    :initarg :end-square
+    :accessor end-square)
+
+   ;; The type of piece moved.
+   ;; If the piece moved was a pawn that promoted, this is
+   ;; the type of piece post-promotion.
+   (piece
+    :initarg :piece
+    :accessor piece)))
+
+;; Prints moves in a slightly-more readable format.
+;; Eventually we'll probably want to explicitly output standard
+;; algebraic notation, either here or via a dedicated function.
+(defmethod print-object ((obj move) stream)
+  (with-accessors ((start start-square)
+                   (end end-square)
+                   (piece piece))
+      obj
+    (format stream "~A:~A-~A" piece start end)
+    ))
+
 ;; The whole drawing surface be painted over,
 ;; so this red is just to highlight if something is misaligned.
 (set-source-rgb 1 0 0)
