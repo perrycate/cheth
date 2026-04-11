@@ -65,6 +65,33 @@
       :white
       :black))
 
+(defun next-color (color)
+  (if (eq :white color)
+      :black
+      :white))
+
+;; Recursively removes each move from a list of moves (first to last)
+;; and updates the position accordingly.
+(defun pop-moves (moves position color)
+  (if (null moves)
+      position
+      (let ((move (car moves)))
+        (with-accessors ((start start-square)
+                         (end end-square)
+                         (piece piece))
+            move
+          (pop-moves (cdr moves)
+                     (acons end
+                            (list color piece)
+                            (remove start position :key #'car))
+                     (next-color color))))))
+
+;; Returns an alist containing the pieces present in each square
+;; based on the current game history.
+(defun current-position (game)
+  (let ((moves (reverse (history game))))
+    (pop-moves moves *starting-position* :white)))
+
 (defun make-move (game start end piece)
   (with-accessors ((history history)) game
     (push (make-instance 'move
@@ -74,8 +101,7 @@
           history)))
 
 (defclass move ()
-  (
-   (start-square
+  ((start-square
     :initarg :start-square
     :accessor start-square)
    (end-square

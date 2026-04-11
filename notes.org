@@ -38,17 +38,12 @@ X,Y coordinates have 0,0 in top left corner, positive numbers from there.
 (ql:quickload :cheth)
 
 * TODO
-** Figure out board state representation
-*** Separate from _game_ state, which includes all past moves (so we can check for castling rights, en passant, etc)
-*** Board state is just: What pieces are on the board, and where.
-*** Probably a map from square (identified by 'h3, etc) to piece (if any)
-*** Eventually we'll have a function that generates board state based on game state.
-*** Game History is a series of moves, each move is (previous-square new-square piece)
-*** Piece is (color type)
-*** For manipulating squares (eg finding adjacent ones), let's add up, down, left, and right helpers.
-Return nil if the square is already in use or out of bounds?
-** [x] Render pieces correctly based on a board state
-
+** Organize rendering machinery / UI state?
+** Calculate valid moves from a square
+** Move validation
+*** Can only move your pieces
+*** Can only go to a valid square
+** Pawn Promotion flow
 
 * AI review 6/6/26
   ---
