@@ -1,8 +1,5 @@
 (in-package :cheth)
 
-(defparameter *surface* (create-pdf-surface "test.pdf" 600 600))
-(setf *context* (create-context *surface*))
-
 (defparameter *draw-fns*
   '(((:white :pawn) . draw-white-pawn)
     ((:white :knight) . draw-white-knight)
@@ -103,11 +100,6 @@
     (format stream "~A:~A-~A" piece start end)
     ))
 
-;; The whole drawing surface be painted over,
-;; so this red is just to highlight if something is misaligned.
-(set-source-rgb 1 0 0)
-(paint)
-
 (defun draw-piece (color piece pixel-coordinates board-width)
   (destructuring-bind (x-offset y-offset) pixel-coordinates
     (let* ((width (/ board-width 8))
@@ -171,9 +163,3 @@
   (dolist (piece position)
     (destructuring-bind (square . (color piece)) piece
       (draw-piece color piece (coordinates-of square) width))))
-
-(draw-board 600)
-(draw-position *starting-position* 600)
-
-(destroy *context*)
-(destroy *surface*)
