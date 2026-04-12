@@ -11,7 +11,7 @@
   (setf *context* (cl-gtk2-cairo:create-gdk-context (gtk:widget-window widget)))
   (multiple-value-bind (w h) (gdk:drawable-get-size (gtk:widget-window widget))
     (draw-board (min w h))
-    (draw-position *starting-position* (min w h)))
+    (draw-position (current-position *game*) (min w h)))
   (format t "Rendered!~%"))
 
 (defun handle-click (widget event)
@@ -33,40 +33,43 @@
         ;; If we already selected a square, add our move to the game history
         ;; and reset the selected square.
         (t
-         ;; TODO get piece on selected square.
-         (make-move *game* *selected-square* square piece)))
+         (multiple-value-bind (s c piece) (assoc *selected-square* (current-position *game*))
+           (declare (ignore s c))
+           ;; TODO somehow we're inserting nil for piece.
+           ;; First, figure out a more ergonomic way to restart.
+           ;; Why can't we start another game after the first one errors?
+           (make-move *game* *selected-square* square piece)
+           (setf *selected-square* nil)
 
-      )))
+           ;; Render new board.
+           (render-chessboard widget event)))))))
 
-;; Ok, let's render a chessboard.
-(defun test ()
+(defun run ()
   (gtk:within-main-loop
-    (let ((window (make-instance 'gtk:gtk-window
-                                 :type :toplevel
-                                 :title "Hello World"
-                                 :default-width 600
-                                 :default-height 800))
-          (button (make-instance 'gtk:button :label "Do"))
-          (drawing-area (make-instance 'gtk:drawing-area)))
+   (let ((window (make-instance 'gtk:gtk-window
+                                :type :toplevel
+                                :title "Hello World"
+                                :default-width 600
+                                :default-height 800))
+         (drawing-area (make-instance 'gtk:drawing-area)))
 
 
-      ;; Close the window when the user clicks the X
-      (gobject:connect-signal window "destroy"
-                              (lambda (widget)
-                                (declare (ignore widget))
-                                (gtk:leave-gtk-main)))
+     ;; Close the window when the user clicks the X
+     (gobject:connect-signal window "destroy"
+                             (lambda (widget)
+                               (declare (ignore widget))
+                               (gtk:leave-gtk-main)))
 
-      (gobject:connect-signal drawing-area "expose-event"
-                              #'render-chessboard)
+     (gobject:connect-signal drawing-area "expose-event"
+                             #'render-chessboard)
 
-      (gobject:connect-signal drawing-area "button-press-event"
-                              #'handle-click)
+     (gobject:connect-signal drawing-area "button-press-event"
+                             #'handle-click)
 
-      ;; Allow gtk to report button-press events to the drawing area. (I think.)
-      (setf (gtk:widget-events drawing-area) '(:button-press-mask))
+     ;; Allow gtk to report button-press events to the drawing area. (I think.)
+     (setf (gtk:widget-events drawing-area) '(:button-press-mask))
 
-      ;; Add the button to the window and show everything
-      (gtk:container-add window drawing-area)
-      (gtk:container-add window button)
-      (gtk:widget-show window :all t))))
-(test)
+     ;; Add the button to the window and show everything
+     (gtk:container-add window drawing-area)
+     (gtk:widget-show window :all t))))
+(run)
