@@ -130,9 +130,13 @@
   (destructuring-bind (x-offset y-offset) pixel-coordinates
     (let* ((width (/ board-width 8))
            (x (* x-offset width))
-           (y (* y-offset width)))
-      ;; FIXME error with nicer message if there's no matching draw fn for some reason.
-      (funcall (cdr (assoc (list color piece) *draw-fns* :test #'equal)) x y width))))
+           (y (* y-offset width))
+
+           (draw-fn (assoc (list color piece) *draw-fns* :test #'equal)))
+
+      (if (eq draw-fn nil) (error (format nil "Unrecognized color ~A or piece ~A" color piece))
+          (funcall (cdr (assoc (list color piece) *draw-fns* :test #'equal)) x y width))
+      )))
 
 ;; TODO I wonder if I can just get width from the context?
 ;; Would need to call gdk:drawable-get-size on the widget window.

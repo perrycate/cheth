@@ -33,11 +33,7 @@
         ;; If we already selected a square, add our move to the game history
         ;; and reset the selected square.
         (t
-         (multiple-value-bind (s c piece) (assoc *selected-square* (current-position *game*))
-           (declare (ignore s c))
-           ;; TODO somehow we're inserting nil for piece.
-           ;; First, figure out a more ergonomic way to restart.
-           ;; Why can't we start another game after the first one errors?
+         (destructuring-bind (s c piece) (assoc *selected-square* (current-position *game*))
            (make-move *game* *selected-square* square piece)
            (setf *selected-square* nil)
 
@@ -46,30 +42,30 @@
 
 (defun run ()
   (gtk:within-main-loop
-   (let ((window (make-instance 'gtk:gtk-window
-                                :type :toplevel
-                                :title "Hello World"
-                                :default-width 600
-                                :default-height 800))
-         (drawing-area (make-instance 'gtk:drawing-area)))
+    (let ((window (make-instance 'gtk:gtk-window
+                                 :type :toplevel
+                                 :title "Hello World"
+                                 :default-width 600
+                                 :default-height 800))
+          (drawing-area (make-instance 'gtk:drawing-area)))
 
 
-     ;; Close the window when the user clicks the X
-     (gobject:connect-signal window "destroy"
-                             (lambda (widget)
-                               (declare (ignore widget))
-                               (gtk:leave-gtk-main)))
+      ;; Close the window when the user clicks the X
+      (gobject:connect-signal window "destroy"
+                              (lambda (widget)
+                                (declare (ignore widget))
+                                (gtk:leave-gtk-main)))
 
-     (gobject:connect-signal drawing-area "expose-event"
-                             #'render-chessboard)
+      (gobject:connect-signal drawing-area "expose-event"
+                              #'render-chessboard)
 
-     (gobject:connect-signal drawing-area "button-press-event"
-                             #'handle-click)
+      (gobject:connect-signal drawing-area "button-press-event"
+                              #'handle-click)
 
-     ;; Allow gtk to report button-press events to the drawing area. (I think.)
-     (setf (gtk:widget-events drawing-area) '(:button-press-mask))
+      ;; Allow gtk to report button-press events to the drawing area. (I think.)
+      (setf (gtk:widget-events drawing-area) '(:button-press-mask))
 
-     ;; Add the button to the window and show everything
-     (gtk:container-add window drawing-area)
-     (gtk:widget-show window :all t))))
+      ;; Add the button to the window and show everything
+      (gtk:container-add window drawing-area)
+      (gtk:widget-show window :all t))))
 (run)
