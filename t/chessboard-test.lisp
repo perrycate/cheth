@@ -11,6 +11,3 @@
 (deftest test ()
   (combine-results
     (test-game-history)))
-
-(let ((game (make-move (make-instance 'game) :e2 :e4 :pawn)))
-  (current-position game))
