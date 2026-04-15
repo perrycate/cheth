@@ -24,4 +24,5 @@
                (:module "src"
                 :components (
                              (:file "chessboard")
-                             (:file "cheth")))))
+                             (:file "cheth")
+                             (:file "test")))))
