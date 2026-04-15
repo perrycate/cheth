@@ -104,6 +104,12 @@
           history))
   game)
 
+(defun make-moves (game &rest moves)
+  (loop for m in moves
+        do (destructuring-bind (start end piece) m
+             (make-move game start end piece)))
+  game)
+
 (defclass move ()
   ((start-square
     :initarg :start-square
