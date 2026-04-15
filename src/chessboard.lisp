@@ -90,7 +90,7 @@
                      (next-color color))))))
 
 (defun clear-squares (position squares)
-  "Clears any entries for the given squares from the provided positions.
+  "Clears any entries for the given squares from the provided position.
 
   For example: (clear-squares *starting-position* (:a1 :b1))."
   (set-difference position squares :test (lambda (a b) (equal (car a) b))))
