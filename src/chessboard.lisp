@@ -68,9 +68,9 @@
       :black
       :white))
 
-;; Recursively removes each move from a list of moves (first to last)
-;; and updates the position accordingly.
 (defun pop-moves (moves position color)
+  "Recursively removes each move from a list of moves (first to last)
+   and updates the position accordingly."
   (if (null moves)
       position
       (let ((move (car moves)))
@@ -84,9 +84,9 @@
                             (remove start position :key #'car))
                      (next-color color))))))
 
-;; Returns an alist containing the pieces present in each square
-;; based on the current game history.
 (defun current-position (game)
+  "Returns an alist containing the pieces present in each square
+   based on the current game history."
   (let ((moves (reverse (history game))))
     (pop-moves moves *starting-position* :white)))
 
@@ -119,10 +119,10 @@
     :initarg :piece
     :accessor piece)))
 
-;; Prints moves in a slightly-more readable format.
-;; Eventually we'll probably want to explicitly output standard
-;; algebraic notation, either here or via a dedicated function.
 (defmethod print-object ((obj move) stream)
+  "Prints moves in a somewhat-readable format."
+  ;; Eventually we'll probably want to explicitly output standard
+  ;; algebraic notation, either here or via a dedicated function.
   (with-accessors ((start start-square)
                    (end end-square)
                    (piece piece))
@@ -155,13 +155,13 @@
         (if (= (mod (+ x y) 2) 0) (set-source-rgb 1 1 1) (set-source-rgb 0 0 0))
         (fill-path)))))
 
-;; Translates a square value (eg :b2) into x and y coordinates, where each square
-;; is one unit, and the top left square is (0,0).
-;; e.g. :b2 -> (1,6).
-;;
-;; (Having 0,0 be in the top left instead of bottom left matches Cairo's coordinate
-;; system, so all we have to do is scale the coordinates to the resolution we're using.)
 (defun coordinates-of (square)
+  "Translates a square value (eg :b2) into x and y coordinates, where each square
+   is one unit, and the top left square is (0,0).
+   e.g. :b2 -> (1,6).
+
+   (Having 0,0 be in the top left instead of bottom left matches Cairo's coordinate
+   system, so all we have to do is scale the coordinates to the resolution we're using.)"
   (let* ((s (string square))
 
          ;; Start by getting integer values with 0,0 at a1.
@@ -171,12 +171,13 @@
     ;; Make 0,0 the top left.
     (list x-int (- 7 y-int))))
 
-;; Converts x and y pixel values using cairo/gtk's coordinate system
-;; ((0,0) in the top left) into a specific square (a8, etc.)
-;;
-;; FIXME: This function assumes the chessboard starts at (0,0) and is the
-;; full width of the window. That will not always be true.
 (defun square-of (x y board-width)
+  "Converts x and y pixel values using cairo/gtk's coordinate system
+   ((0,0) in the top left) into a specific square (a8, etc.)
+
+   FIXME: This function assumes the chessboard starts at (0,0) and is the
+   full width of the window. That will not always be true."
+
   (when (> (max x y) board-width)
     (return-from square-of))
   (let* ((square-width (/ board-width 8))
