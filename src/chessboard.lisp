@@ -81,8 +81,19 @@
           (pop-moves (cdr moves)
                      (acons end
                             (list color piece)
-                            (remove start position :key #'car))
+
+                            ;; We clear the end square in addition to the start square
+                            ;; in case this was a capture.
+                            (clear-squares position (list start end)))
+
+
                      (next-color color))))))
+
+(defun clear-squares (position squares)
+  "Clears any entries for the given squares from the provided positions.
+
+  For example: (clear-squares *starting-position* (:a1 :b1))."
+  (set-difference position squares :test (lambda (a b) (equal (car a) b))))
 
 (defun current-position (game)
   "Returns an alist containing the pieces present in each square

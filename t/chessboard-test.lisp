@@ -22,3 +22,5 @@
   (combine-results
     (test-game-history)
     (test-captures)))
+
+(set-difference *starting-position* '(:a5 :a1) :test (lambda (a b) (equal (car a) b)))
