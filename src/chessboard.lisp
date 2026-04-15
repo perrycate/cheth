@@ -56,9 +56,7 @@
   ;; Stack of moves played, with the most recent moves on top.
   ((history
     :initform ()
-    :accessor history)
-   (draw-context
-    :initarg :draw-context)))
+    :accessor history)))
 
 (defun current-player (game)
   (if (= 0 (mod (length (history game)) 2))
@@ -92,13 +90,19 @@
   (let ((moves (reverse (history game))))
     (pop-moves moves *starting-position* :white)))
 
+(defun get-piece (square position)
+  "Returns the piece on the given square in the given position, or nil if
+   no piece is present."
+  (cdr (assoc square position)))
+
 (defun make-move (game start end piece)
   (with-accessors ((history history)) game
     (push (make-instance 'move
                          :start-square start
                          :end-square end
                          :piece piece)
-          history)))
+          history))
+  game)
 
 (defclass move ()
   ((start-square
