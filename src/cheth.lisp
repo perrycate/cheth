@@ -68,4 +68,3 @@
       ;; Add the button to the window and show everything
       (gtk:container-add window drawing-area)
       (gtk:widget-show window :all t))))
-(run)

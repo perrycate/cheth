@@ -1,6 +1,8 @@
 ;;;; Test utilities copied from the Practical Common Lisp book, chapter 9.
 ;;;;
 ;;;; Should be adequate for our purposes.
+(in-package :cheth)
+
 (defvar *test-name* nil)
 
 (defmacro with-gensyms ((&rest names) &body body)
