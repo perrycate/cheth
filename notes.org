@@ -199,3 +199,33 @@ X,Y coordinates have 0,0 in top left corner, positive numbers from there.
   ├──────────┼───────────────────────────────────────────────────────────────────┤
   │ Low      │ Pure black squares make black pieces invisible                    │
   └──────────┴───────────────────────────────────────────────────────────────────┘
+
+
+* Kindle Dependency Hell
+Goal: Get a binary of cheth running on a kindle.
+
+** Attempts
+1. SBCL Cross compilation: Not a thing.
+2. SBCL inside docker
+   Platform issues. Installed qemu stuff.
+   Some back and forth because I did arm64 instead of arm32v7.
+   Eventually "worked".
+   Binary didn't work on kindle because wrong glib version.
+3. SBCL inside docker: older debian image that had the correct glib version. (Jessie, glib 2.20)
+   Couldn't install sbcl (or anything else from repos), 404s (presumably because not supported anymore).
+4. Fuck it, let's installl nix on the kindle itself and install SBCL there directly, then compile on kindle. (Can refine it later.)
+   https://collindewey.net/articles/nix-on-kindle/
+
+   Testing on Kindle 7.
+   
+   My kindle doesn't support ext4, using ext3 instead.
+
+   Got nix working, but not enough RAM to compile sbcl on-device.
+   Ran into issues cross-compiling SBCL with nix: https://claude.ai/chat/d018b2b9-181f-45b7-840b-2316b89678fb
+5. Might need to patch the nixos build specification?
+   OR
+   https://www.timmons.dev/posts/static-executables-with-sbcl.html
+   https://www.timmons.dev/posts/static-executables-with-sbcl-v2.html
+   Do this^ in an arm docker image.
+   OR
+   ECL to c++, then use the kindlemodding.org build pipeline.
