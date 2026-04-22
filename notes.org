@@ -229,3 +229,5 @@ Goal: Get a binary of cheth running on a kindle.
    Do this^ in an arm docker image.
    OR
    ECL to c++, then use the kindlemodding.org build pipeline.
+   OR
+   Chroot into extracted kindle filesystem: https://discord.com/channels/1083603487025274911/1111542970580205619/1496239870299869324
