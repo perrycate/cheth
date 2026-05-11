@@ -1,9 +1,13 @@
 (defsystem :cheth/evil-compatibility-hacks
   :components ((:file "evil-compatibility-hacks")))
 
+(defsystem :cheth/load-vendored-bullshit
+  :components ((:file "load-vendored-bullshit")))
+
 (defsystem :cheth
   :depends-on (
                :cheth/evil-compatibility-hacks
+               :cheth/load-vendored-bullshit
                :cl-gtk2-gtk
                :cl-gtk2-cairo)
   :components (

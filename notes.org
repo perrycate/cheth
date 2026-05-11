@@ -37,6 +37,9 @@ X,Y coordinates have 0,0 in top left corner, positive numbers from there.
 (pushnew (uiop:getcwd) ql:*local-project-directories*)
 (ql:quickload :cheth)
 
+* Building
+
+
 * TODO
 ** Organize rendering machinery / UI state?
 ** Calculate valid moves from a square
