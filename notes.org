@@ -19,25 +19,13 @@ View lives in a gtk container. Setup and top-level entry point is glchess.vala.
 X,Y coordinates have 0,0 in top left corner, positive numbers from there.
 
 
-* Installing Dependencies and such
-1. Cloned `git://repo.or.cz/cl-gtk2.git` into ~/quicklisp/local-projects.
-   ```
-2. Installed dependencies:
-   ```
-   sudo emerge -a x11-libs/gtk+:2 x11-libs/gtk+:2 dev-libs/glib:2
-   ```
-   (Slot 2 is for gtk 2)
-
-3. in SBCL:
-```
-(ql:register-local-projects)
-```
-
-* Setup
-(pushnew (uiop:getcwd) ql:*local-project-directories*)
-(ql:quickload :cheth)
+* Running
+(asdf:load-system :cheth)
+(in-package :cheth)
+(run)
 
 * Building
+./build.sh
 
 
 * TODO

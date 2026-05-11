@@ -68,3 +68,11 @@
       ;; Add the button to the window and show everything
       (gtk:container-add window drawing-area)
       (gtk:widget-show window :all t))))
+
+(defun run-noninteractive ()
+  (run)
+
+  ;; within-main-loop returns immediately because cl-gtk2 runs the GTK
+  ;; loop in a background thread. Block here so the standalone binary
+  ;; doesn't exit before the window opens.
+  (gtk:join-gtk-main))
